@@ -1,0 +1,37 @@
+name: Unzip File on Push
+
+on:
+  push:
+    paths:
+      - '**.zip'  # מפעיל את הפעולה אם נוסף קובץ ZIP
+  workflow_dispatch:
+
+permissions:
+  contents: write  # נותן הרשאה לדחוף שינויים ל-GitHub
+
+jobs:
+  unzip:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set up Git Credentials
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global credential.helper store
+
+      - name: Unzip Files
+        run: |
+          for file in $(find . -name "*.zip"); do
+            unzip -o "$file" -d "$(dirname "$file")"
+            rm "$file"  # מוחק את קובץ ה-ZIP לאחר חילוץ
+          done
+
+      - name: Commit Extracted Files
+        run: |
+          git add .
+          git commit -m "Unzipped files automatically" || echo "No changes to commit"
+          git push
