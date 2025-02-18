@@ -1,0 +1,3 @@
+RewriteEngine on
+RewriteCond $1 !^(ads\.txt|try\.php|chat\.php|test\.php|upload\.php|index\.php|install\.php|app|lib|static|uploads|test|robots\.txt|google5cf6a5fd4bd8666e\.html)
+RewriteRule ^(.*)$ index.php/$1 [L]
